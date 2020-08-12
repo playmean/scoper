@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
+
+	"git.playmean.xyz/playmean/error-tracking/logger"
 )
 
 // User entry
@@ -17,13 +18,15 @@ type User struct {
 type Config struct {
 	filePath string
 
-	Port  int `json:"port,omitempty"`
-	Users map[string]User
+	Port     int    `json:"port"`
+	Database string `json:"database"`
+	Password string `json:"password"`
 }
 
 // Default of manager
 var Default = Config{
-	Port: 3000,
+	Port:     3000,
+	Database: "database.db",
 }
 
 var tag = "CONFIG"
@@ -36,7 +39,7 @@ func (c Config) Dump() {
 	output = append(output, fmt.Sprintf("web port: %v", c.Port))
 
 	for _, line := range output {
-		log.Printf("[%v] %v", tag, line)
+		logger.Log(tag, line)
 	}
 }
 
