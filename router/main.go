@@ -1,6 +1,7 @@
 package router
 
 import (
+	"git.playmean.xyz/playmean/error-tracking/common"
 	"git.playmean.xyz/playmean/error-tracking/config"
 	"git.playmean.xyz/playmean/error-tracking/track"
 	"git.playmean.xyz/playmean/error-tracking/user"
@@ -18,21 +19,25 @@ func Setup(conf *config.Config, app *fiber.App) {
 	app.Use(helmet.New())
 
 	apiGroup := app.Group("/api", basicauth.New(basicauth.Config{
-		Authorizer: user.Authorizer(map[string]string{
-			"super": conf.Password,
-		}),
-	}))
+		Authorizer: user.Authorizer(config.SuperUsers),
+	}), user.Info)
 
-	apiGroup.Group("/users", func(c *fiber.Ctx) {
-		if c.Locals("role").(string) != "admin" {
-			c.Status(403).JSON(response{
+	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) {
+		user := c.Locals("user").(*user.User)
+
+		if user.Role != "super" {
+			c.Status(403).JSON(common.Response{
 				OK:    false,
 				Error: "insufficient rights",
 			})
 
 			return
 		}
+
+		c.Next()
 	})
+	apiUsers.Get("/list", user.ControllerList)
+	apiUsers.Get("/create", user.ControllerCreate)
 
 	trackGroup := app.Group("/track/:key", track.Middleware)
 	trackGroup.Post("/error", track.Error)

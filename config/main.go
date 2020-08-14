@@ -27,7 +27,11 @@ type Config struct {
 var Default = Config{
 	Port:     3000,
 	Database: "database.db",
+	Password: "password",
 }
+
+// SuperUsers predefined list
+var SuperUsers = make(map[string]string)
 
 var tag = "CONFIG"
 
@@ -57,5 +61,7 @@ func Load(configPath string) (*Config, error) {
 
 	err = json.Unmarshal(buf, &c)
 
-	return &c, nil
+	SuperUsers["super"] = c.Password
+
+	return &c, err
 }

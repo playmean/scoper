@@ -33,6 +33,8 @@ func main() {
 
 	user.Migrate()
 
+	user.Populate(config.SuperUsers)
+
 	app := fiber.New(&fiber.Settings{
 		ServerHeader:          "error-tracking",
 		StrictRouting:         true,
