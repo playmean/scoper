@@ -6,6 +6,7 @@ import (
 	"git.playmean.xyz/playmean/error-tracking/config"
 	"git.playmean.xyz/playmean/error-tracking/database"
 	"git.playmean.xyz/playmean/error-tracking/logger"
+	"git.playmean.xyz/playmean/error-tracking/project"
 	"git.playmean.xyz/playmean/error-tracking/router"
 	"git.playmean.xyz/playmean/error-tracking/user"
 
@@ -32,6 +33,7 @@ func main() {
 	}
 
 	user.Migrate()
+	project.Migrate()
 
 	user.Populate(config.SuperUsers)
 

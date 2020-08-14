@@ -3,6 +3,7 @@ package router
 import (
 	"git.playmean.xyz/playmean/error-tracking/common"
 	"git.playmean.xyz/playmean/error-tracking/config"
+	"git.playmean.xyz/playmean/error-tracking/project"
 	"git.playmean.xyz/playmean/error-tracking/track"
 	"git.playmean.xyz/playmean/error-tracking/user"
 
@@ -38,6 +39,10 @@ func Setup(conf *config.Config, app *fiber.App) {
 	})
 	apiUsers.Get("/list", user.ControllerList)
 	apiUsers.Get("/create", user.ControllerCreate)
+
+	apiProjects := apiGroup.Group("/projects")
+	apiProjects.Get("/list", project.ControllerList)
+	apiProjects.Get("/create", project.ControllerCreate)
 
 	trackGroup := app.Group("/track/:key", track.Middleware)
 	trackGroup.Post("/error", track.Error)
