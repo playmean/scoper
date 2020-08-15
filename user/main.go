@@ -8,12 +8,15 @@ import (
 
 // User model
 type User struct {
-	ID           uint      `json:"id" gorm:"primary_key"`
-	Username     string    `json:"username"`
-	PasswordHash string    `json:"-"`
-	Role         string    `json:"role"`
-	CreatedAt    time.Time `json:"-"`
-	UpdatedAt    time.Time `json:"-"`
+	ID uint `json:"id" gorm:"primary_key"`
+
+	Username     string `json:"username"`
+	Password     string `json:"password,omitempty" gorm:"-"`
+	PasswordHash string `json:"-"`
+	Role         string `json:"role"`
+
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 // Migrate table

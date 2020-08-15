@@ -3,6 +3,7 @@ package user
 import (
 	"git.playmean.xyz/playmean/error-tracking/common"
 	"git.playmean.xyz/playmean/error-tracking/database"
+	"git.playmean.xyz/playmean/error-tracking/generator"
 
 	"github.com/gofiber/fiber"
 )
@@ -23,7 +24,7 @@ func ControllerList(c *fiber.Ctx) {
 
 // ControllerCreate method
 func ControllerCreate(c *fiber.Ctx) {
-	if !common.HaveFields(c, []string{"username", "password", "role"}) {
+	if !common.HaveFields(c, []string{"username", "role"}) {
 		return
 	}
 
@@ -53,9 +54,12 @@ func ControllerCreate(c *fiber.Ctx) {
 		return
 	}
 
+	password := generator.Password(12)
+
 	user = User{
 		Username:     username,
-		PasswordHash: hashPassword(c.FormValue("password")),
+		Password:     password,
+		PasswordHash: hashPassword(password),
 		Role:         c.FormValue("role"),
 	}
 
