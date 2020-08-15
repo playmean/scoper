@@ -8,6 +8,7 @@ import (
 	"git.playmean.xyz/playmean/error-tracking/logger"
 	"git.playmean.xyz/playmean/error-tracking/project"
 	"git.playmean.xyz/playmean/error-tracking/router"
+	"git.playmean.xyz/playmean/error-tracking/track"
 	"git.playmean.xyz/playmean/error-tracking/user"
 
 	"github.com/gofiber/fiber"
@@ -34,6 +35,7 @@ func main() {
 
 	user.Migrate()
 	project.Migrate()
+	track.Migrate()
 
 	user.Populate(config.SuperUsers)
 

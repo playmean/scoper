@@ -1,59 +1,37 @@
 package track
 
 import (
-	"encoding/json"
+	"time"
 
-	"git.playmean.xyz/playmean/error-tracking/logger"
-
-	"github.com/gofiber/fiber"
+	"git.playmean.xyz/playmean/error-tracking/database"
 )
 
-// Middleware for tracking APIs
-func Middleware(c *fiber.Ctx) {
-	projectKey := c.Params("key")
+// Track model
+type Track struct {
+	ID uint `json:"id" gorm:"primary_key"`
 
-	if projectKey == "" {
-		c.JSON(response{
-			OK:    false,
-			Error: "project key not specified",
-		})
+	Type       string `json:"type"`
+	ProjectKey string `json:"project_key"`
 
+	Message  string `json:"message,omitempty" gorm:"type:text"`
+	Stack    string `json:"stack,omitempty" gorm:"type:text"`
+	Filename string `json:"filename,omitempty"`
+	Lineno   int    `json:"lineno,omitempty"`
+	Colno    int    `json:"colno,omitempty"`
+
+	Meta string `json:"meta,omitempty" gorm:"type:json"`
+
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+}
+
+// Migrate table
+func Migrate() {
+	db := database.DBConn
+
+	if db.HasTable(&Track{}) {
 		return
 	}
 
-	c.Next()
-}
-
-// Error tracking controller
-func Error(c *fiber.Ctx) {
-	projectKey := c.Params("key")
-
-	var body reportPacket
-
-	c.BodyParser(&body)
-
-	formatted, _ := json.MarshalIndent(body, "", "    ")
-
-	logger.Log("TRACK:ERROR", projectKey, string(formatted))
-
-	c.JSON(response{
-		OK: true,
-	})
-}
-
-// Log tracking controller
-func Log(c *fiber.Ctx) {
-	projectKey := c.Params("key")
-
-	var body interface{}
-
-	c.BodyParser(&body)
-
-	formatted, _ := json.MarshalIndent(body, "", "    ")
-
-	logger.Log("TRACK:LOG", projectKey, string(formatted))
-
-	c.JSON(response{
-		OK: true,
-	})
+	db.CreateTable(&Track{})
 }
