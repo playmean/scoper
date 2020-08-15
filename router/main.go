@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/fiber/middleware"
 	"github.com/gofiber/helmet"
+	"github.com/gofiber/limiter"
 )
 
 // Setup app router
@@ -44,7 +45,8 @@ func Setup(conf *config.Config, app *fiber.App) {
 	apiProjects.Get("/list", project.ControllerList)
 	apiProjects.Get("/create", project.ControllerCreate)
 
-	trackGroup := app.Group("/track/:key", track.Middleware)
-	trackGroup.Post("/error", track.Error)
-	trackGroup.Post("/log", track.Log)
+	app.Post("/track/:key/:type", limiter.New(limiter.Config{
+		Timeout: 10,
+		Max:     5,
+	}), track.Middleware)
 }
