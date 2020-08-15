@@ -6,6 +6,7 @@ import (
 	"git.playmean.xyz/playmean/error-tracking/user"
 
 	"github.com/gofiber/fiber"
+	"github.com/google/uuid"
 )
 
 // ControllerList method
@@ -14,7 +15,9 @@ func ControllerList(c *fiber.Ctx) {
 
 	list := new([]Project)
 
-	db.Find(&list)
+	owner := c.Locals("user").(*user.User)
+
+	db.Find(&list, "owner_id = ?", owner.ID)
 
 	c.JSON(common.Response{
 		OK:   true,
@@ -43,10 +46,13 @@ func ControllerCreate(c *fiber.Ctx) {
 
 	owner := c.Locals("user").(*user.User)
 
+	keyUUID, _ := uuid.NewRandom()
+
 	project := Project{
-		Name:  name,
-		Title: c.FormValue("title"),
-		Owner: *owner,
+		Key:     keyUUID.String(),
+		Name:    name,
+		Title:   c.FormValue("title"),
+		OwnerID: owner.ID,
 	}
 
 	db.Create(&project)

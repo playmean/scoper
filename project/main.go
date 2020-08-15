@@ -4,15 +4,17 @@ import (
 	"time"
 
 	"git.playmean.xyz/playmean/error-tracking/database"
-	"git.playmean.xyz/playmean/error-tracking/user"
 )
 
 // Project model
 type Project struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
-	Name      string    `json:"name"`
-	Title     string    `json:"title"`
-	Owner     user.User `json:"owner"`
+	ID uint `json:"id" gorm:"primary_key"`
+
+	Key     string `json:"key"`
+	Name    string `json:"name"`
+	Title   string `json:"title"`
+	OwnerID uint   `json:"owner_id"`
+
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 }
