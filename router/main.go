@@ -38,12 +38,12 @@ func Setup(conf *config.Config, app *fiber.App) {
 
 		c.Next()
 	})
-	apiUsers.Get("/list", user.ControllerList)
-	apiUsers.Get("/create", user.ControllerCreate)
+	apiUsers.Get("/", user.ControllerList)
+	apiUsers.Post("/", user.ControllerCreate)
 
 	apiProjects := apiGroup.Group("/projects")
-	apiProjects.Get("/list", project.ControllerList)
-	apiProjects.Get("/create", project.ControllerCreate)
+	apiProjects.Get("/", project.ControllerList)
+	apiProjects.Post("/", project.ControllerCreate)
 
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
 		Timeout: 10,
