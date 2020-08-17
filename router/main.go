@@ -44,6 +44,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 	apiProjects := apiGroup.Group("/projects")
 	apiProjects.Get("/", project.ControllerList)
 	apiProjects.Post("/", project.ControllerCreate)
+	apiProjects.Put("/:key", project.ControllerManage)
 
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
 		Timeout: 10,

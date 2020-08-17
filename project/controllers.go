@@ -62,12 +62,52 @@ func ControllerCreate(c *fiber.Ctx) {
 		OK:   true,
 		Data: prj,
 	})
+}
+
+// ControllerManage method
+func ControllerManage(c *fiber.Ctx) {
+	db := database.DBConn
+
+	if !common.HaveFields(c, []string{"name", "title", "public"}) {
+		return
 	}
 
-	db.Create(&project)
+	projectKey := c.Params("key")
+
+	var prj Project
+
+	db.First(&prj, "key = ?", projectKey)
+
+	if prj.ID == 0 {
+		c.JSON(common.Response{
+			OK:    false,
+			Error: "project not found",
+		})
+
+		return
+	}
+
+	name := c.FormValue("name")
+	title := c.FormValue("title")
+	public := c.FormValue("public")
+
+	if !common.ValidateName(name) {
+		c.JSON(common.Response{
+			OK:    false,
+			Error: "project name must be alphanumeric",
+		})
+
+		return
+	}
+
+	prj.Name = name
+	prj.Title = title
+	prj.Public = public == "1"
+
+	db.Save(&prj)
 
 	c.JSON(common.Response{
 		OK:   true,
-		Data: project,
+		Data: prj,
 	})
 }
