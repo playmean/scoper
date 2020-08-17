@@ -11,6 +11,7 @@ type User struct {
 	ID uint `json:"id" gorm:"primary_key"`
 
 	Username     string `json:"username"`
+	FullName     string `json:"fullname"`
 	Password     string `json:"password,omitempty" gorm:"-"`
 	PasswordHash string `json:"-"`
 	Role         string `json:"role"`

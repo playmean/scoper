@@ -58,6 +58,7 @@ func ControllerCreate(c *fiber.Ctx) {
 
 	user = User{
 		Username:     username,
+		FullName:     c.FormValue("fullname"),
 		Password:     password,
 		PasswordHash: hashPassword(password),
 		Role:         c.FormValue("role"),
@@ -94,8 +95,10 @@ func ControllerManage(c *fiber.Ctx) {
 		return
 	}
 
+	fullname := c.FormValue("fullname")
 	role := c.FormValue("role")
 
+	user.FullName = fullname
 	user.Role = role
 
 	db.Save(&user)
