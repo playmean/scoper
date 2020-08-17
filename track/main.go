@@ -10,8 +10,9 @@ import (
 type Track struct {
 	ID uint `json:"id" gorm:"primary_key"`
 
-	Type       string `json:"type"`
-	ProjectKey string `json:"project_key"`
+	Type        string `json:"type"`
+	ProjectKey  string `json:"project_key"`
+	Environment string `json:"environment"`
 
 	Message  string `json:"message,omitempty" gorm:"type:text"`
 	Stack    string `json:"stack,omitempty" gorm:"type:text"`

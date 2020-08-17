@@ -23,8 +23,9 @@ func controllerError(c *fiber.Ctx, prj *project.Project) {
 	logger.Log("TRACK:ERROR", prj.Key, string(formatted))
 
 	track := Track{
-		Type:       "error",
-		ProjectKey: prj.Key,
+		Type:        "error",
+		ProjectKey:  prj.Key,
+		Environment: resolveEnvironment(c),
 
 		Message:  body.Message,
 		Stack:    body.Stack,
@@ -57,8 +58,9 @@ func controllerLog(c *fiber.Ctx, prj *project.Project) {
 	logger.Log("TRACK:LOG", prj.Key, string(formatted))
 
 	track := Track{
-		Type:       "log",
-		ProjectKey: prj.Key,
+		Type:        "log",
+		ProjectKey:  prj.Key,
+		Environment: resolveEnvironment(c),
 
 		Meta: marshal(body.Data),
 		Tags: marshal(body.Tags),
