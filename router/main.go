@@ -40,6 +40,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 	})
 	apiUsers.Get("/", user.ControllerList)
 	apiUsers.Post("/", user.ControllerCreate)
+	apiUsers.Put("/:id", user.ControllerManage)
 
 	apiProjects := apiGroup.Group("/projects")
 	apiProjects.Get("/", project.ControllerList)

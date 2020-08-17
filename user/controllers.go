@@ -24,6 +24,8 @@ func ControllerList(c *fiber.Ctx) {
 
 // ControllerCreate method
 func ControllerCreate(c *fiber.Ctx) {
+	db := database.DBConn
+
 	if !common.HaveFields(c, []string{"username", "role"}) {
 		return
 	}
@@ -39,11 +41,9 @@ func ControllerCreate(c *fiber.Ctx) {
 		return
 	}
 
-	db := database.DBConn
-
 	var user User
 
-	db.Where("username = ?", username).First(&user)
+	db.First(&user, "username = ?", username)
 
 	if user.ID > 0 {
 		c.JSON(common.Response{
@@ -62,6 +62,41 @@ func ControllerCreate(c *fiber.Ctx) {
 		PasswordHash: hashPassword(password),
 		Role:         c.FormValue("role"),
 	}
+
+	db.Save(&user)
+
+	c.JSON(common.Response{
+		OK:   true,
+		Data: user,
+	})
+}
+
+// ControllerManage method
+func ControllerManage(c *fiber.Ctx) {
+	db := database.DBConn
+
+	if !common.HaveFields(c, []string{"role"}) {
+		return
+	}
+
+	userID := c.Params("id")
+
+	var user User
+
+	db.First(&user, userID)
+
+	if user.ID == 0 {
+		c.JSON(common.Response{
+			OK:    false,
+			Error: "user not found",
+		})
+
+		return
+	}
+
+	role := c.FormValue("role")
+
+	user.Role = role
 
 	db.Save(&user)
 
