@@ -17,7 +17,7 @@ func ControllerList(c *fiber.Ctx) {
 
 	owner := c.Locals("user").(*user.User)
 
-	db.Find(&list, "owner_id = ?", owner.ID)
+	db.Find(&list, "owner_id = ? OR public = ?", owner.ID, true)
 
 	c.JSON(common.Response{
 		OK:   true,
@@ -27,6 +27,8 @@ func ControllerList(c *fiber.Ctx) {
 
 // ControllerCreate method
 func ControllerCreate(c *fiber.Ctx) {
+	db := database.DBConn
+
 	if !common.HaveFields(c, []string{"name", "title"}) {
 		return
 	}
@@ -42,17 +44,24 @@ func ControllerCreate(c *fiber.Ctx) {
 		return
 	}
 
-	db := database.DBConn
-
 	owner := c.Locals("user").(*user.User)
 
 	keyUUID, _ := uuid.NewRandom()
 
-	project := Project{
+	prj := Project{
 		Key:     keyUUID.String(),
 		Name:    name,
 		Title:   c.FormValue("title"),
 		OwnerID: owner.ID,
+		Public:  false,
+	}
+
+	db.Create(&prj)
+
+	c.JSON(common.Response{
+		OK:   true,
+		Data: prj,
+	})
 	}
 
 	db.Create(&project)

@@ -14,6 +14,7 @@ type Project struct {
 	Name    string `json:"name"`
 	Title   string `json:"title"`
 	OwnerID uint   `json:"owner_id"`
+	Public  bool   `json:"public"`
 
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
