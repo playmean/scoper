@@ -3,6 +3,7 @@ package track
 import (
 	"encoding/json"
 
+	"git.playmean.xyz/playmean/error-tracking/common"
 	"git.playmean.xyz/playmean/error-tracking/database"
 	"git.playmean.xyz/playmean/error-tracking/logger"
 	"git.playmean.xyz/playmean/error-tracking/project"
@@ -21,7 +22,7 @@ func controllerError(c *fiber.Ctx, prj *project.Project) {
 
 	logger.Log("TRACK:ERROR", prj.Key, string(formatted))
 
-	db.Create(&Track{
+	track := Track{
 		Type:       "error",
 		ProjectKey: prj.Key,
 
@@ -30,33 +31,45 @@ func controllerError(c *fiber.Ctx, prj *project.Project) {
 		Filename: body.Source.Filename,
 		Lineno:   body.Source.Position.Lineno,
 		Colno:    body.Source.Position.Colno,
-	})
 
-	c.JSON(response{
+		Tags: marshal(body.Tags),
+	}
+
+	db.Save(&track)
+
+	c.JSON(common.Response{
 		OK: true,
+		Data: map[string]string{
+			"hash": hashID(track.ID),
+		},
 	})
 }
 
 func controllerLog(c *fiber.Ctx, prj *project.Project) {
 	db := database.DBConn
 
-	var body interface{}
+	var body logPacket
 
 	c.BodyParser(&body)
 
 	formatted, _ := json.MarshalIndent(body, "", "    ")
-	formattedJSON := string(formatted)
 
-	logger.Log("TRACK:LOG", prj.Key, formattedJSON)
+	logger.Log("TRACK:LOG", prj.Key, string(formatted))
 
-	db.Create(&Track{
+	track := Track{
 		Type:       "log",
 		ProjectKey: prj.Key,
 
-		Meta: formattedJSON,
-	})
+		Meta: marshal(body.Data),
+		Tags: marshal(body.Tags),
+	}
 
-	c.JSON(response{
+	db.Save(&track)
+
+	c.JSON(common.Response{
 		OK: true,
+		Data: map[string]string{
+			"hash": hashID(track.ID),
+		},
 	})
 }

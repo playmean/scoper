@@ -20,6 +20,7 @@ type Track struct {
 	Colno    int    `json:"colno,omitempty"`
 
 	Meta string `json:"meta,omitempty" gorm:"type:json"`
+	Tags string `json:"tags,omitempty" gorm:"type:json"`
 
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
