@@ -1,3 +1,6 @@
 main
+dist
 config.json
 database.db
+frontend/node_modules
+frontend/dist
