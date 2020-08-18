@@ -33,7 +33,7 @@ func ControllerCreate(c *fiber.Ctx) {
 	username := c.FormValue("username")
 
 	if !common.ValidateName(username) {
-		c.JSON(common.Response{
+		c.Status(400).JSON(common.Response{
 			OK:    false,
 			Error: "username must be alphanumeric",
 		})
@@ -46,7 +46,7 @@ func ControllerCreate(c *fiber.Ctx) {
 	db.First(&user, "username = ?", username)
 
 	if user.ID > 0 {
-		c.JSON(common.Response{
+		c.Status(409).JSON(common.Response{
 			OK:    false,
 			Error: "username already taken",
 		})
@@ -87,7 +87,7 @@ func ControllerManage(c *fiber.Ctx) {
 	db.First(&user, userID)
 
 	if user.ID == 0 {
-		c.JSON(common.Response{
+		c.Status(404).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})
@@ -120,7 +120,7 @@ func ControllerReset(c *fiber.Ctx) {
 	db.First(&user, userID)
 
 	if user.ID == 0 {
-		c.JSON(common.Response{
+		c.Status(404).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})

@@ -20,7 +20,7 @@ func Middleware(c *fiber.Ctx) {
 	db.First(&prj, "key = ?", projectKey)
 
 	if prj.ID == 0 {
-		c.JSON(common.Response{
+		c.Status(404).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
@@ -34,7 +34,7 @@ func Middleware(c *fiber.Ctx) {
 	case "log":
 		controllerLog(c, &prj)
 	default:
-		c.JSON(common.Response{
+		c.Status(400).JSON(common.Response{
 			OK:    false,
 			Error: "unknown type of track",
 		})
