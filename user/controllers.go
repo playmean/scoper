@@ -108,3 +108,35 @@ func ControllerManage(c *fiber.Ctx) {
 		Data: user,
 	})
 }
+
+// ControllerReset method
+func ControllerReset(c *fiber.Ctx) {
+	db := database.DBConn
+
+	userID := c.Params("id")
+
+	var user User
+
+	db.First(&user, userID)
+
+	if user.ID == 0 {
+		c.JSON(common.Response{
+			OK:    false,
+			Error: "user not found",
+		})
+
+		return
+	}
+
+	password := generator.Password(12)
+
+	user.Password = password
+	user.PasswordHash = hashPassword(password)
+
+	db.Save(&user)
+
+	c.JSON(common.Response{
+		OK:   true,
+		Data: user,
+	})
+}
