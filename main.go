@@ -48,5 +48,9 @@ func main() {
 
 	router.Setup(conf, app)
 
-	app.Listen(conf.Port)
+	err = app.Listen(conf.Port)
+
+	if err != nil {
+		logger.Fatal("APP", "%v", err)
+	}
 }
