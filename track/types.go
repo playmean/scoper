@@ -16,12 +16,12 @@ type reportPacket struct {
 	Message string             `json:"message"`
 	Stack   string             `json:"stack"`
 	Source  reportPacketSource `json:"source"`
-	Tags    map[string]string  `json:"tags"`
+	Tags    interface{}        `json:"tags"`
 }
 
 type logPacket struct {
-	Data interface{}       `json:"data"`
-	Tags map[string]string `json:"tags"`
+	Data interface{} `json:"data"`
+	Tags interface{} `json:"tags"`
 }
 
 type response struct {
