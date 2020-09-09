@@ -9,4 +9,7 @@ bin::
 docker:
 	docker build -t scoper -f ./Dockerfile ./dist
 
-.PHONY: docker
+start:
+	docker run --rm -d -p 3000:3000/tcp -v $PWD/dist/data:/data scoper:latest
+
+.PHONY: docker start
