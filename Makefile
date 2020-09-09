@@ -9,10 +9,4 @@ bin::
 docker:
 	docker build -t scoper -f ./Dockerfile ./dist
 
-restart:
-	docker-compose -f ./docker-compose.yml down && docker-compose -f ./docker-compose.yml pull && docker-compose -f ./docker-compose.yml up -d
-
-stop:
-	docker-compose -f ./docker-compose.yml down
-
-.PHONY: docker restart stop
+.PHONY: docker
