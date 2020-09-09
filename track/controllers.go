@@ -3,10 +3,10 @@ package track
 import (
 	"encoding/json"
 
-	"git.playmean.xyz/playmean/error-tracking/common"
-	"git.playmean.xyz/playmean/error-tracking/database"
-	"git.playmean.xyz/playmean/error-tracking/logger"
-	"git.playmean.xyz/playmean/error-tracking/project"
+	"git.playmean.xyz/playmean/scoper/common"
+	"git.playmean.xyz/playmean/scoper/database"
+	"git.playmean.xyz/playmean/scoper/logger"
+	"git.playmean.xyz/playmean/scoper/project"
 
 	"github.com/gofiber/fiber"
 )

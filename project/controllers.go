@@ -1,9 +1,9 @@
 package project
 
 import (
-	"git.playmean.xyz/playmean/error-tracking/common"
-	"git.playmean.xyz/playmean/error-tracking/database"
-	"git.playmean.xyz/playmean/error-tracking/user"
+	"git.playmean.xyz/playmean/scoper/common"
+	"git.playmean.xyz/playmean/scoper/database"
+	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 	"github.com/google/uuid"

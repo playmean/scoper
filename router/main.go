@@ -1,11 +1,11 @@
 package router
 
 import (
-	"git.playmean.xyz/playmean/error-tracking/common"
-	"git.playmean.xyz/playmean/error-tracking/config"
-	"git.playmean.xyz/playmean/error-tracking/project"
-	"git.playmean.xyz/playmean/error-tracking/track"
-	"git.playmean.xyz/playmean/error-tracking/user"
+	"git.playmean.xyz/playmean/scoper/common"
+	"git.playmean.xyz/playmean/scoper/config"
+	"git.playmean.xyz/playmean/scoper/project"
+	"git.playmean.xyz/playmean/scoper/track"
+	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/basicauth"
 	"github.com/gofiber/fiber"

@@ -1,4 +1,4 @@
-module git.playmean.xyz/playmean/error-tracking
+module git.playmean.xyz/playmean/scoper
 
 go 1.14
 

@@ -3,7 +3,7 @@ package user
 import (
 	"time"
 
-	"git.playmean.xyz/playmean/error-tracking/database"
+	"git.playmean.xyz/playmean/scoper/database"
 )
 
 // User model

@@ -1,8 +1,8 @@
 package database
 
 import (
-	"git.playmean.xyz/playmean/error-tracking/config"
-	"git.playmean.xyz/playmean/error-tracking/logger"
+	"git.playmean.xyz/playmean/scoper/config"
+	"git.playmean.xyz/playmean/scoper/logger"
 
 	"github.com/jinzhu/gorm"
 

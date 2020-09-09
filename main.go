@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 
-	"git.playmean.xyz/playmean/error-tracking/config"
-	"git.playmean.xyz/playmean/error-tracking/database"
-	"git.playmean.xyz/playmean/error-tracking/logger"
-	"git.playmean.xyz/playmean/error-tracking/project"
-	"git.playmean.xyz/playmean/error-tracking/router"
-	"git.playmean.xyz/playmean/error-tracking/track"
-	"git.playmean.xyz/playmean/error-tracking/user"
+	"git.playmean.xyz/playmean/scoper/config"
+	"git.playmean.xyz/playmean/scoper/database"
+	"git.playmean.xyz/playmean/scoper/logger"
+	"git.playmean.xyz/playmean/scoper/project"
+	"git.playmean.xyz/playmean/scoper/router"
+	"git.playmean.xyz/playmean/scoper/track"
+	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 )
@@ -40,7 +40,7 @@ func main() {
 	user.Populate(config.SuperUsers)
 
 	app := fiber.New(&fiber.Settings{
-		ServerHeader:          "error-tracking",
+		ServerHeader:          "scoper",
 		StrictRouting:         true,
 		DisableDefaultDate:    true,
 		DisableStartupMessage: true,

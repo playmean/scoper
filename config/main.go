@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"git.playmean.xyz/playmean/error-tracking/logger"
+	"git.playmean.xyz/playmean/scoper/logger"
 )
 
 // User entry

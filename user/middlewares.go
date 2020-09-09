@@ -1,7 +1,7 @@
 package user
 
 import (
-	"git.playmean.xyz/playmean/error-tracking/database"
+	"git.playmean.xyz/playmean/scoper/database"
 
 	"github.com/gofiber/fiber"
 )
