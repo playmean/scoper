@@ -1,32 +1,30 @@
-package project
+package controllers
 
 import (
 	"git.playmean.xyz/playmean/scoper/common"
 	"git.playmean.xyz/playmean/scoper/database"
+	"git.playmean.xyz/playmean/scoper/project"
 	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 	"github.com/google/uuid"
 )
 
-// ControllerList method
-func ControllerList(c *fiber.Ctx) {
+// ProjectList method
+func ProjectList(c *fiber.Ctx) {
 	db := database.DBConn
 
-	list := new([]Project)
+	list := make([]project.Project, 0)
 
 	owner := c.Locals("user").(*user.User)
 
-	db.Find(&list, "owner_id = ? OR public = ?", owner.ID, true)
+	res := db.Find(&list, "owner_id = ? OR public = ?", owner.ID, true)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: list,
-	})
+	common.Answer(c, res.Error, list)
 }
 
-// ControllerCreate method
-func ControllerCreate(c *fiber.Ctx) {
+// ProjectCreate method
+func ProjectCreate(c *fiber.Ctx) {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"name", "title"}) {
@@ -48,7 +46,7 @@ func ControllerCreate(c *fiber.Ctx) {
 
 	keyUUID, _ := uuid.NewRandom()
 
-	prj := Project{
+	prj := project.Project{
 		Key:     keyUUID.String(),
 		Name:    name,
 		Title:   c.FormValue("title"),
@@ -56,16 +54,13 @@ func ControllerCreate(c *fiber.Ctx) {
 		Public:  false,
 	}
 
-	db.Create(&prj)
+	res := db.Create(&prj)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: prj,
-	})
+	common.Answer(c, res.Error, prj)
 }
 
-// ControllerManage method
-func ControllerManage(c *fiber.Ctx) {
+// ProjectManage method
+func ProjectManage(c *fiber.Ctx) {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"name", "title", "public"}) {
@@ -74,7 +69,7 @@ func ControllerManage(c *fiber.Ctx) {
 
 	projectKey := c.Params("key")
 
-	var prj Project
+	var prj project.Project
 
 	db.First(&prj, "key = ?", projectKey)
 
@@ -104,10 +99,7 @@ func ControllerManage(c *fiber.Ctx) {
 	prj.Title = title
 	prj.Public = public == "1"
 
-	db.Save(&prj)
+	res := db.Save(&prj)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: prj,
-	})
+	common.Answer(c, res.Error, prj)
 }

@@ -1,8 +1,6 @@
 package project
 
 import (
-	"time"
-
 	"git.playmean.xyz/playmean/scoper/database"
 )
 
@@ -16,17 +14,14 @@ type Project struct {
 	OwnerID uint   `json:"owner_id"`
 	Public  bool   `json:"public"`
 
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
+	Archived  int64 `json:"-"`
+	CreatedAt int64 `json:"created_at"`
+	UpdatedAt int64 `json:"-"`
 }
 
 // Migrate table
 func Migrate() {
 	db := database.DBConn
 
-	if db.HasTable(&Project{}) {
-		return
-	}
-
-	db.CreateTable(&Project{})
+	db.AutoMigrate(&Project{})
 }
