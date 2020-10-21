@@ -12,16 +12,18 @@ type reportPacketSource struct {
 	Position reportPacketSourcePosition `json:"position"`
 }
 
-type reportPacket struct {
+// ReportPacket for track
+type ReportPacket struct {
 	Message string             `json:"message"`
 	Stack   string             `json:"stack"`
 	Source  reportPacketSource `json:"source"`
-	Tags    interface{}        `json:"tags"`
+	Tags    map[string]string  `json:"tags"`
 }
 
-type logPacket struct {
-	Data interface{} `json:"data"`
-	Tags interface{} `json:"tags"`
+// LogPacket for track
+type LogPacket struct {
+	Data interface{}       `json:"data"`
+	Tags map[string]string `json:"tags"`
 }
 
 type response struct {

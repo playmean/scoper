@@ -50,5 +50,5 @@ func Setup(conf *config.Config, app *fiber.App) {
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
 		Timeout: 10,
 		Max:     5,
-	}), track.Middleware)
+	}), controllers.MiddlewareTrack)
 }

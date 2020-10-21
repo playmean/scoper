@@ -1,9 +1,8 @@
 package track
 
 import (
-	"time"
-
 	"git.playmean.xyz/playmean/scoper/database"
+	"git.playmean.xyz/playmean/scoper/project"
 )
 
 // Track model
@@ -11,7 +10,8 @@ type Track struct {
 	ID uint `json:"id" gorm:"primary_key"`
 
 	Type        string `json:"type"`
-	ProjectKey  string `json:"project_key"`
+	ProjectID   uint
+	Project     project.Project
 	Environment string `json:"environment"`
 
 	Message  string `json:"message,omitempty" gorm:"type:text"`
@@ -21,19 +21,15 @@ type Track struct {
 	Colno    int    `json:"colno,omitempty"`
 
 	Meta string `json:"meta,omitempty" gorm:"type:json"`
-	Tags string `json:"tags,omitempty" gorm:"type:json"`
 
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
+	Archived  int64 `json:"-"`
+	CreatedAt int64 `json:"-"`
+	UpdatedAt int64 `json:"-"`
 }
 
 // Migrate table
 func Migrate() {
 	db := database.DBConn
 
-	if db.HasTable(&Track{}) {
-		return
-	}
-
-	db.CreateTable(&Track{})
+	db.AutoMigrate(&Track{})
 }
