@@ -34,3 +34,20 @@ func HaveFields(c *fiber.Ctx, fields []string) bool {
 func ValidateName(name string) bool {
 	return regexUsername.MatchString(name)
 }
+
+// Answer for API request
+func Answer(c *fiber.Ctx, err error, data interface{}) {
+	resp := Response{
+		OK: err == nil,
+	}
+
+	if err != nil {
+		resp.Error = err.Error()
+
+		c.Status(500)
+	} else {
+		resp.Data = data
+	}
+
+	c.JSON(resp)
+}
