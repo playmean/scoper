@@ -1,7 +1,8 @@
 package user
 
 import (
-	"time"
+	"crypto/sha1"
+	"encoding/hex"
 
 	"git.playmean.xyz/playmean/scoper/database"
 )
@@ -16,19 +17,15 @@ type User struct {
 	PasswordHash string `json:"-"`
 	Role         string `json:"role"`
 
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
+	CreatedAt int64 `json:"-"`
+	UpdatedAt int64 `json:"-"`
 }
 
 // Migrate table
 func Migrate() {
 	db := database.DBConn
 
-	if db.HasTable(&User{}) {
-		return
-	}
-
-	db.CreateTable(&User{})
+	db.AutoMigrate(&User{})
 }
 
 // Populate superusers
@@ -40,7 +37,7 @@ func Populate(superusers map[string]string) {
 
 		db.FirstOrCreate(&found, &User{
 			Username:     username,
-			PasswordHash: hashPassword(password),
+			PasswordHash: HashPassword(password),
 			Role:         "super",
 		})
 	}
@@ -59,9 +56,17 @@ func Authorizer(superusers map[string]string) func(string, string) bool {
 
 		db.First(&found, &User{
 			Username:     username,
-			PasswordHash: hashPassword(password),
+			PasswordHash: HashPassword(password),
 		})
 
 		return found.ID > 0
 	}
+}
+
+// HashPassword string
+func HashPassword(password string) string {
+	hasher := sha1.New()
+	hasher.Write([]byte(password))
+
+	return hex.EncodeToString(hasher.Sum(nil))
 }

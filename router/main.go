@@ -3,8 +3,7 @@ package router
 import (
 	"git.playmean.xyz/playmean/scoper/common"
 	"git.playmean.xyz/playmean/scoper/config"
-	"git.playmean.xyz/playmean/scoper/project"
-	"git.playmean.xyz/playmean/scoper/track"
+	"git.playmean.xyz/playmean/scoper/controllers"
 	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/basicauth"
@@ -22,7 +21,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 
 	apiGroup := app.Group("/api", basicauth.New(basicauth.Config{
 		Authorizer: user.Authorizer(config.SuperUsers),
-	}), user.Info)
+	}), controllers.MiddlewareUser)
 
 	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) {
 		user := c.Locals("user").(*user.User)
@@ -38,10 +37,10 @@ func Setup(conf *config.Config, app *fiber.App) {
 
 		c.Next()
 	})
-	apiUsers.Get("/", user.ControllerList)
-	apiUsers.Post("/", user.ControllerCreate)
-	apiUsers.Put("/:id", user.ControllerManage)
-	apiUsers.Put("/:id/reset", user.ControllerReset)
+	apiUsers.Get("/", controllers.UserList)
+	apiUsers.Post("/", controllers.UserCreate)
+	apiUsers.Put("/:id", controllers.UserManage)
+	apiUsers.Put("/:id/reset", controllers.UserReset)
 
 	apiProjects := apiGroup.Group("/projects")
 	apiProjects.Get("/", project.ControllerList)

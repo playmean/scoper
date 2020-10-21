@@ -1,18 +1,35 @@
-package user
+package controllers
 
 import (
 	"git.playmean.xyz/playmean/scoper/common"
 	"git.playmean.xyz/playmean/scoper/database"
 	"git.playmean.xyz/playmean/scoper/generator"
+	"git.playmean.xyz/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 )
 
-// ControllerList method
-func ControllerList(c *fiber.Ctx) {
+// MiddlewareUser method
+func MiddlewareUser(c *fiber.Ctx) {
 	db := database.DBConn
 
-	list := new([]User)
+	u := user.User{
+		Username: c.Locals("username").(string),
+		Role:     "super",
+	}
+
+	db.Where("username = ?", u.Username).Take(&u)
+
+	c.Locals("user", &u)
+
+	c.Next()
+}
+
+// UserList method
+func UserList(c *fiber.Ctx) {
+	db := database.DBConn
+
+	list := make([]user.User, 0)
 
 	db.Find(&list)
 
@@ -22,8 +39,8 @@ func ControllerList(c *fiber.Ctx) {
 	})
 }
 
-// ControllerCreate method
-func ControllerCreate(c *fiber.Ctx) {
+// UserCreate method
+func UserCreate(c *fiber.Ctx) {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"username", "role"}) {
@@ -41,11 +58,11 @@ func ControllerCreate(c *fiber.Ctx) {
 		return
 	}
 
-	var user User
+	var u user.User
 
-	db.First(&user, "username = ?", username)
+	db.First(&u, "username = ?", username)
 
-	if user.ID > 0 {
+	if u.ID > 0 {
 		c.Status(409).JSON(common.Response{
 			OK:    false,
 			Error: "username already taken",
@@ -56,24 +73,21 @@ func ControllerCreate(c *fiber.Ctx) {
 
 	password := generator.Password(12)
 
-	user = User{
+	u = user.User{
 		Username:     username,
 		FullName:     c.FormValue("fullname"),
 		Password:     password,
-		PasswordHash: hashPassword(password),
+		PasswordHash: user.HashPassword(password),
 		Role:         c.FormValue("role"),
 	}
 
-	db.Save(&user)
+	res := db.Save(&u)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: user,
-	})
+	common.Answer(c, res.Error, u)
 }
 
-// ControllerManage method
-func ControllerManage(c *fiber.Ctx) {
+// UserManage method
+func UserManage(c *fiber.Ctx) {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"role"}) {
@@ -82,11 +96,11 @@ func ControllerManage(c *fiber.Ctx) {
 
 	userID := c.Params("id")
 
-	var user User
+	var u user.User
 
-	db.First(&user, userID)
+	db.First(&u, userID)
 
-	if user.ID == 0 {
+	if u.ID == 0 {
 		c.Status(404).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
@@ -98,28 +112,25 @@ func ControllerManage(c *fiber.Ctx) {
 	fullname := c.FormValue("fullname")
 	role := c.FormValue("role")
 
-	user.FullName = fullname
-	user.Role = role
+	u.FullName = fullname
+	u.Role = role
 
-	db.Save(&user)
+	res := db.Save(&u)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: user,
-	})
+	common.Answer(c, res.Error, u)
 }
 
-// ControllerReset method
-func ControllerReset(c *fiber.Ctx) {
+// UserReset method
+func UserReset(c *fiber.Ctx) {
 	db := database.DBConn
 
 	userID := c.Params("id")
 
-	var user User
+	var u user.User
 
-	db.First(&user, userID)
+	db.First(&u, userID)
 
-	if user.ID == 0 {
+	if u.ID == 0 {
 		c.Status(404).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
@@ -130,13 +141,10 @@ func ControllerReset(c *fiber.Ctx) {
 
 	password := generator.Password(12)
 
-	user.Password = password
-	user.PasswordHash = hashPassword(password)
+	u.Password = password
+	u.PasswordHash = user.HashPassword(password)
 
-	db.Save(&user)
+	res := db.Save(&u)
 
-	c.JSON(common.Response{
-		OK:   true,
-		Data: user,
-	})
+	common.Answer(c, res.Error, u)
 }
