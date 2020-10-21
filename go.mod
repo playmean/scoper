@@ -8,5 +8,6 @@ require (
 	github.com/gofiber/helmet v0.1.2
 	github.com/gofiber/limiter v0.1.2
 	github.com/google/uuid v1.1.1
-	github.com/jinzhu/gorm v1.9.16
+	gorm.io/driver/sqlite v1.1.3
+	gorm.io/gorm v1.20.4
 )
