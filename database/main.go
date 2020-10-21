@@ -4,10 +4,8 @@ import (
 	"git.playmean.xyz/playmean/scoper/config"
 	"git.playmean.xyz/playmean/scoper/logger"
 
-	"github.com/jinzhu/gorm"
-
-	// sqlite driver for gorm
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/driver/sqlite"
 )
 
 var (
@@ -21,7 +19,7 @@ var (
 func Init(conf *config.Config) error {
 	var err error
 
-	DBConn, err = gorm.Open("sqlite3", conf.Database)
+	DBConn, err = gorm.Open(sqlite.Open(conf.Database), &gorm.Config{})
 
 	if err != nil {
 		return err
