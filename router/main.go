@@ -43,9 +43,16 @@ func Setup(conf *config.Config, app *fiber.App) {
 	apiUsers.Put("/:id/reset", controllers.UserReset)
 
 	apiProjects := apiGroup.Group("/projects")
-	apiProjects.Get("/", project.ControllerList)
-	apiProjects.Post("/", project.ControllerCreate)
-	apiProjects.Put("/:key", project.ControllerManage)
+	apiProjects.Get("/", controllers.ProjectList)
+	apiProjects.Post("/", controllers.ProjectCreate)
+	apiProjects.Put("/:key", controllers.ProjectManage)
+
+	apiView := apiGroup.Group("/view/:key", controllers.MiddlewareView)
+	apiView.Get("/environments", controllers.ViewEnvironments)
+	apiView.Get("/tags", controllers.ViewTags)
+	apiView.Get("/tags/:id", controllers.ViewTagValues)
+	apiView.Get("/tracks", controllers.ViewTracks)
+	apiView.Get("/tracks/:id", controllers.ViewTrack)
 
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
 		Timeout: 10,
