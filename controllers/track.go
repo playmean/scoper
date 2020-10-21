@@ -3,11 +3,11 @@ package controllers
 import (
 	"encoding/json"
 
-	"git.playmean.xyz/playmean/scoper/common"
-	"git.playmean.xyz/playmean/scoper/database"
-	"git.playmean.xyz/playmean/scoper/logger"
-	"git.playmean.xyz/playmean/scoper/project"
-	"git.playmean.xyz/playmean/scoper/track"
+	"github.com/playmean/scoper/common"
+	"github.com/playmean/scoper/database"
+	"github.com/playmean/scoper/logger"
+	"github.com/playmean/scoper/project"
+	"github.com/playmean/scoper/track"
 
 	"github.com/gofiber/fiber"
 )

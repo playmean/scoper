@@ -1,10 +1,10 @@
 package router
 
 import (
-	"git.playmean.xyz/playmean/scoper/common"
-	"git.playmean.xyz/playmean/scoper/config"
-	"git.playmean.xyz/playmean/scoper/controllers"
-	"git.playmean.xyz/playmean/scoper/user"
+	"github.com/playmean/scoper/common"
+	"github.com/playmean/scoper/config"
+	"github.com/playmean/scoper/controllers"
+	"github.com/playmean/scoper/user"
 
 	"github.com/gofiber/basicauth"
 	"github.com/gofiber/fiber"

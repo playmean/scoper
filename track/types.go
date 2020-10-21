@@ -1,6 +1,6 @@
 package track
 
-import "git.playmean.xyz/playmean/scoper/common"
+import "github.com/playmean/scoper/common"
 
 type reportPacketSourcePosition struct {
 	Lineno int `json:"lineno"`

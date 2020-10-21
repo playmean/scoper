@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 
-	"git.playmean.xyz/playmean/scoper/database"
+	"github.com/playmean/scoper/database"
 )
 
 // User model

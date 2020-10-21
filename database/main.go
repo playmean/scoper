@@ -1,11 +1,11 @@
 package database
 
 import (
-	"git.playmean.xyz/playmean/scoper/config"
-	"git.playmean.xyz/playmean/scoper/logger"
+	"github.com/playmean/scoper/config"
+	"github.com/playmean/scoper/logger"
 
-	"gorm.io/gorm"
 	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var (

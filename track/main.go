@@ -1,8 +1,8 @@
 package track
 
 import (
-	"git.playmean.xyz/playmean/scoper/database"
-	"git.playmean.xyz/playmean/scoper/project"
+	"github.com/playmean/scoper/database"
+	"github.com/playmean/scoper/project"
 )
 
 // Track model

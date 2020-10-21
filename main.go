@@ -3,15 +3,15 @@ package main
 import (
 	"flag"
 
-	"git.playmean.xyz/playmean/scoper/config"
-	"git.playmean.xyz/playmean/scoper/connection"
-	"git.playmean.xyz/playmean/scoper/database"
-	"git.playmean.xyz/playmean/scoper/logger"
-	"git.playmean.xyz/playmean/scoper/project"
-	"git.playmean.xyz/playmean/scoper/router"
-	"git.playmean.xyz/playmean/scoper/tag"
-	"git.playmean.xyz/playmean/scoper/track"
-	"git.playmean.xyz/playmean/scoper/user"
+	"github.com/playmean/scoper/config"
+	"github.com/playmean/scoper/connection"
+	"github.com/playmean/scoper/database"
+	"github.com/playmean/scoper/logger"
+	"github.com/playmean/scoper/project"
+	"github.com/playmean/scoper/router"
+	"github.com/playmean/scoper/tag"
+	"github.com/playmean/scoper/track"
+	"github.com/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 )

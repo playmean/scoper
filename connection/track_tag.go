@@ -1,8 +1,8 @@
 package connection
 
 import (
-	"git.playmean.xyz/playmean/scoper/tag"
-	"git.playmean.xyz/playmean/scoper/track"
+	"github.com/playmean/scoper/tag"
+	"github.com/playmean/scoper/track"
 )
 
 // ConTrackTag connection between two objects

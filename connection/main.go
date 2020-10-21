@@ -1,6 +1,6 @@
 package connection
 
-import "git.playmean.xyz/playmean/scoper/database"
+import "github.com/playmean/scoper/database"
 
 // Migrate tables
 func Migrate() {

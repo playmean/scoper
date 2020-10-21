@@ -1,7 +1,7 @@
 package tag
 
 import (
-	"git.playmean.xyz/playmean/scoper/database"
+	"github.com/playmean/scoper/database"
 )
 
 // Name model

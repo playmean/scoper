@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"git.playmean.xyz/playmean/scoper/connection"
-	"git.playmean.xyz/playmean/scoper/database"
-	"git.playmean.xyz/playmean/scoper/tag"
-	"git.playmean.xyz/playmean/scoper/track"
+	"github.com/playmean/scoper/connection"
+	"github.com/playmean/scoper/database"
+	"github.com/playmean/scoper/tag"
+	"github.com/playmean/scoper/track"
 )
 
 func newTags(track *track.Track, tags map[string]string) []uint {

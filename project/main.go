@@ -1,7 +1,7 @@
 package project
 
 import (
-	"git.playmean.xyz/playmean/scoper/database"
+	"github.com/playmean/scoper/database"
 )
 
 // Project model

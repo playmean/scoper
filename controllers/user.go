@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"git.playmean.xyz/playmean/scoper/common"
-	"git.playmean.xyz/playmean/scoper/database"
-	"git.playmean.xyz/playmean/scoper/generator"
-	"git.playmean.xyz/playmean/scoper/user"
+	"github.com/playmean/scoper/common"
+	"github.com/playmean/scoper/database"
+	"github.com/playmean/scoper/generator"
+	"github.com/playmean/scoper/user"
 
 	"github.com/gofiber/fiber"
 )
