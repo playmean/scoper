@@ -4,10 +4,12 @@ import (
 	"flag"
 
 	"git.playmean.xyz/playmean/scoper/config"
+	"git.playmean.xyz/playmean/scoper/connection"
 	"git.playmean.xyz/playmean/scoper/database"
 	"git.playmean.xyz/playmean/scoper/logger"
 	"git.playmean.xyz/playmean/scoper/project"
 	"git.playmean.xyz/playmean/scoper/router"
+	"git.playmean.xyz/playmean/scoper/tag"
 	"git.playmean.xyz/playmean/scoper/track"
 	"git.playmean.xyz/playmean/scoper/user"
 
@@ -36,6 +38,8 @@ func main() {
 	user.Migrate()
 	project.Migrate()
 	track.Migrate()
+	tag.Migrate()
+	connection.Migrate()
 
 	user.Populate(config.SuperUsers)
 
