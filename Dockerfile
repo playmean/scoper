@@ -8,6 +8,6 @@ RUN [ "/src/docker/build.sh" ]
 
 ADD ./docker/config.json /data
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD [ "/app/scoper", "-config", "/data/config.json" ]

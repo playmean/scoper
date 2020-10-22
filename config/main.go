@@ -25,7 +25,7 @@ type Config struct {
 
 // Default of manager
 var Default = Config{
-	Port:     3000,
+	Port:     8080,
 	Database: "database.db",
 	Password: "password",
 }
