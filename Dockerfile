@@ -6,8 +6,8 @@ WORKDIR /src
 
 RUN [ "/src/docker/build.sh" ]
 
-ADD ./docker/config.json /app
+ADD ./docker/config.json /data
 
 EXPOSE 3000
 
-CMD [ "/app/scoper", "-config", "/app/config.json" ]
+CMD [ "/app/scoper", "-config", "/data/config.json" ]
