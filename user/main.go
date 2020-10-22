@@ -35,11 +35,17 @@ func Populate(superusers map[string]string) {
 	for username, password := range superusers {
 		var found User
 
-		db.FirstOrCreate(&found, &User{
-			Username:     username,
-			PasswordHash: HashPassword(password),
-			Role:         "super",
+		res := db.First(&found, &User{
+			Username: username,
 		})
+
+		if res.Error != nil {
+			db.Create(&User{
+				Username:     username,
+				PasswordHash: HashPassword(password),
+				Role:         "super",
+			})
+		}
 	}
 }
 
