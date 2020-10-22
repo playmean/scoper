@@ -6,7 +6,7 @@ WORKDIR /src
 
 RUN [ "/src/docker/build.sh" ]
 
-ADD ./docker/config.json /data
+ADD ./docker/config.json /data/
 
 EXPOSE 8080
 
