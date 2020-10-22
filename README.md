@@ -4,7 +4,9 @@
 
 ---
 
-[![CircleCI](https://circleci.com/gh/playmean/scoper.svg?style=shield)](https://circleci.com/gh/playmean/scoper) [![GPL-3.0 license](https://img.shields.io/github/license/playmean/scoper.svg)](https://github.com/playmean/scoper/blob/master/LICENSE)
+[![CircleCI](https://circleci.com/gh/playmean/scoper.svg?style=shield)](https://circleci.com/gh/playmean/scoper)
+[![Go Report Card](https://goreportcard.com/badge/github.com/playmean/scoper)](https://goreportcard.com/report/github.com/playmean/scoper)
+[![GPL-3.0 license](https://img.shields.io/github/license/playmean/scoper.svg)](https://github.com/playmean/scoper/blob/master/LICENSE)
 
 ## Getting Started
 
