@@ -21,3 +21,15 @@ docker run -d -p 8080:8080 -v /dir/with/cfg:/data playmean/scoper:latest
 ```
 
 Will grab `config.json` from specified directory.
+
+Default super user/password: `super:super_password`
+
+#### Config example
+
+```json
+{
+    "port": 8080,
+    "password": "super_password",
+    "database": "/data/database.db"
+}
+```
