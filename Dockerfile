@@ -1,9 +1,13 @@
-FROM scratch
+FROM golang:1.14.4
 
-WORKDIR /app
+ADD . /src
 
-ADD ./scoper /app
+WORKDIR /src
+
+RUN [ "/src/docker/build.sh" ]
+
+ADD ./docker/config.json /app
 
 EXPOSE 3000
 
-CMD [ "/app/scoper", "-config", "/data/config.json" ]
+CMD [ "/app/scoper", "-config", "/app/config.json" ]
