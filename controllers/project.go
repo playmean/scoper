@@ -34,7 +34,7 @@ func ProjectCreate(c *fiber.Ctx) {
 	name := c.FormValue("name")
 
 	if !common.ValidateName(name) {
-		c.Status(400).JSON(common.Response{
+		c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "project name must be alphanumeric",
 		})
@@ -74,7 +74,7 @@ func ProjectManage(c *fiber.Ctx) {
 	db.First(&prj, "key = ?", projectKey)
 
 	if prj.ID == 0 {
-		c.Status(404).JSON(common.Response{
+		c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
@@ -87,7 +87,7 @@ func ProjectManage(c *fiber.Ctx) {
 	public := c.FormValue("public")
 
 	if !common.ValidateName(name) {
-		c.Status(400).JSON(common.Response{
+		c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "project name must be alphanumeric",
 		})

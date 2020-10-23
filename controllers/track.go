@@ -24,7 +24,7 @@ func MiddlewareTrack(c *fiber.Ctx) {
 	db.First(&prj, "archived = 0 AND key = ?", projectKey)
 
 	if prj.ID == 0 {
-		c.Status(404).JSON(common.Response{
+		c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
@@ -38,7 +38,7 @@ func MiddlewareTrack(c *fiber.Ctx) {
 	case "log":
 		trackLog(c, &prj)
 	default:
-		c.Status(400).JSON(common.Response{
+		c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "unknown type of track",
 		})

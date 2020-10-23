@@ -68,7 +68,7 @@ func UserCreate(c *fiber.Ctx) {
 	username := c.FormValue("username")
 
 	if !common.ValidateName(username) {
-		c.Status(400).JSON(common.Response{
+		c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "username must be alphanumeric",
 		})
@@ -81,7 +81,7 @@ func UserCreate(c *fiber.Ctx) {
 	db.First(&u, "username = ?", username)
 
 	if u.ID > 0 {
-		c.Status(409).JSON(common.Response{
+		c.Status(fiber.StatusConflict).JSON(common.Response{
 			OK:    false,
 			Error: "username already taken",
 		})
@@ -119,7 +119,7 @@ func UserManage(c *fiber.Ctx) {
 	db.First(&u, userID)
 
 	if u.ID == 0 {
-		c.Status(404).JSON(common.Response{
+		c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})
@@ -149,7 +149,7 @@ func UserReset(c *fiber.Ctx) {
 	db.First(&u, userID)
 
 	if u.ID == 0 {
-		c.Status(404).JSON(common.Response{
+		c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})

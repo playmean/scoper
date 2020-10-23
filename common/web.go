@@ -44,7 +44,7 @@ func Answer(c *fiber.Ctx, err error, data interface{}) {
 	if err != nil {
 		resp.Error = err.Error()
 
-		c.Status(500)
+		c.Status(fiber.StatusInternalServerError)
 	} else {
 		resp.Data = data
 	}

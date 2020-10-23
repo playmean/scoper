@@ -25,7 +25,7 @@ func MiddlewareView(c *fiber.Ctx) {
 	db.First(&prj, "key = ? AND (public = ? OR owner_id = ?)", projectKey, true, usr.ID)
 
 	if prj.ID == 0 {
-		c.Status(404).JSON(common.Response{
+		c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})

@@ -29,7 +29,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 		user := c.Locals("user").(*user.User)
 
 		if user.Role != "super" {
-			c.Status(403).JSON(common.Response{
+			c.Status(fiber.StatusForbidden).JSON(common.Response{
 				OK:    false,
 				Error: "insufficient rights",
 			})
