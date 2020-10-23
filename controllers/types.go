@@ -1,5 +1,9 @@
 package controllers
 
+type respLogin struct {
+	Token string `json:"token"`
+}
+
 type respUserInfo struct {
 	ID uint `json:"id"`
 

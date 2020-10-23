@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/playmean/scoper/common"
 	"github.com/playmean/scoper/database"
 	"github.com/playmean/scoper/generator"
@@ -12,6 +13,15 @@ import (
 // MiddlewareUser method
 func MiddlewareUser(c *fiber.Ctx) error {
 	db := database.DBConn
+
+	jwtInfo := c.Locals("jwt")
+
+	if jwtInfo != nil {
+		jwtToken := jwtInfo.(*jwt.Token)
+		claims := jwtToken.Claims.(jwt.MapClaims)
+
+		c.Locals("username", claims["username"].(string))
+	}
 
 	u := user.User{
 		Username: c.Locals("username").(string),

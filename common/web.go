@@ -1,12 +1,16 @@
 package common
 
 import (
+	"crypto/rsa"
 	"regexp"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 var regexUsername = regexp.MustCompile(`^[a-z0-9_\.]+$`)
+
+// SigningKey for JWT
+var SigningKey *rsa.PrivateKey
 
 // HaveFields in request form
 func HaveFields(c *fiber.Ctx, fields []string) bool {

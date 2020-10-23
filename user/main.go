@@ -49,26 +49,6 @@ func Populate(superusers map[string]string) {
 	}
 }
 
-// Authorizer for users
-func Authorizer(superusers map[string]string) func(string, string) bool {
-	return func(username, password string) bool {
-		if _, ok := superusers[username]; ok {
-			return superusers[username] == password
-		}
-
-		db := database.DBConn
-
-		var found User
-
-		db.First(&found, &User{
-			Username:     username,
-			PasswordHash: HashPassword(password),
-		})
-
-		return found.ID > 0
-	}
-}
-
 // HashPassword string
 func HashPassword(password string) string {
 	hasher := sha256.New()

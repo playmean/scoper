@@ -1,11 +1,14 @@
 package router
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"time"
 
 	"github.com/playmean/scoper/common"
 	"github.com/playmean/scoper/config"
 	"github.com/playmean/scoper/controllers"
+	"github.com/playmean/scoper/logger"
 	"github.com/playmean/scoper/user"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,17 +17,47 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/helmet/v2"
+
+	jwtware "github.com/gofiber/jwt/v2"
 )
 
 // Setup app router
 func Setup(conf *config.Config, app *fiber.App) {
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+
+	if err != nil {
+		logger.Fatal("KEY", "%v", err)
+	}
+
+	common.SigningKey = rsaKey
+
 	app.Use(compress.New())
 	app.Use(favicon.New())
 	app.Use(helmet.New())
 
-	apiGroup := app.Group("/api", basicauth.New(basicauth.Config{
-		Authorizer: user.Authorizer(config.SuperUsers),
-	}), controllers.MiddlewareUser)
+	apiGroup := app.Group("/api")
+	apiGroup.Post("/login", controllers.Login)
+	apiGroup.Use(jwtware.New(jwtware.Config{
+		SigningMethod: "RS256",
+		SigningKey:    common.SigningKey.Public(),
+		ContextKey:    "jwt",
+		Filter: func(c *fiber.Ctx) bool {
+			return checkAuthScheme(c, "basic")
+		},
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			return c.Status(fiber.StatusUnauthorized).JSON(common.Response{
+				OK:    false,
+				Error: "invalid token",
+			})
+		},
+	}))
+	apiGroup.Use(basicauth.New(basicauth.Config{
+		Authorizer: user.Authorize,
+		Next: func(c *fiber.Ctx) bool {
+			return c.Locals("jwt") != nil
+		},
+	}))
+	apiGroup.Use(controllers.MiddlewareUser)
 
 	apiGroup.Get("/info", controllers.UserInfo)
 
