@@ -1,7 +1,7 @@
 package user
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 
 	"github.com/playmean/scoper/database"
@@ -71,7 +71,7 @@ func Authorizer(superusers map[string]string) func(string, string) bool {
 
 // HashPassword string
 func HashPassword(password string) string {
-	hasher := sha1.New()
+	hasher := sha256.New()
 	hasher.Write([]byte(password))
 
 	return hex.EncodeToString(hasher.Sum(nil))
