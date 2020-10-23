@@ -25,6 +25,24 @@ func MiddlewareUser(c *fiber.Ctx) {
 	c.Next()
 }
 
+// UserInfo method
+func UserInfo(c *fiber.Ctx) {
+	u := c.Locals("user").(*user.User)
+
+	c.JSON(common.Response{
+		OK: true,
+		Data: respUserInfo{
+			ID: u.ID,
+
+			Username: u.Username,
+			FullName: u.FullName,
+			Role:     u.Role,
+
+			CreatedAt: u.CreatedAt,
+		},
+	})
+}
+
 // UserList method
 func UserList(c *fiber.Ctx) {
 	db := database.DBConn

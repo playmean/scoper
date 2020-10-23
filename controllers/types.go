@@ -1,5 +1,15 @@
 package controllers
 
+type respUserInfo struct {
+	ID uint `json:"id"`
+
+	Username string `json:"username"`
+	FullName string `json:"fullname"`
+	Role     string `json:"role"`
+
+	CreatedAt int64 `json:"created_at"`
+}
+
 type respEnvironment struct {
 	Environment string `json:"environment"`
 	Count       uint   `json:"count"`

@@ -23,6 +23,8 @@ func Setup(conf *config.Config, app *fiber.App) {
 		Authorizer: user.Authorizer(config.SuperUsers),
 	}), controllers.MiddlewareUser)
 
+	apiGroup.Get("/info", controllers.UserInfo)
+
 	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) {
 		user := c.Locals("user").(*user.User)
 
