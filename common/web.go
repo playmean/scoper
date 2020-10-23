@@ -3,7 +3,7 @@ package common
 import (
 	"regexp"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 var regexUsername = regexp.MustCompile(`^[a-z0-9_\.]+$`)
@@ -36,7 +36,7 @@ func ValidateName(name string) bool {
 }
 
 // Answer for API request
-func Answer(c *fiber.Ctx, err error, data interface{}) {
+func Answer(c *fiber.Ctx, err error, data interface{}) error {
 	resp := Response{
 		OK: err == nil,
 	}
@@ -49,5 +49,5 @@ func Answer(c *fiber.Ctx, err error, data interface{}) {
 		resp.Data = data
 	}
 
-	c.JSON(resp)
+	return c.JSON(resp)
 }

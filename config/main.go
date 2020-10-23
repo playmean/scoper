@@ -18,6 +18,7 @@ type User struct {
 type Config struct {
 	filePath string
 
+	Address  string `json:"address"`
 	Port     int    `json:"port"`
 	Database string `json:"database"`
 	Password string `json:"password"`
@@ -25,6 +26,7 @@ type Config struct {
 
 // Default of manager
 var Default = Config{
+	Address:  "",
 	Port:     8080,
 	Database: "database.db",
 	Password: "password",
@@ -40,7 +42,7 @@ func (c Config) Dump() {
 	var output []string
 
 	output = append(output, fmt.Sprintf("loaded configuration from \"%v\"", c.filePath))
-	output = append(output, fmt.Sprintf("web port: %v", c.Port))
+	output = append(output, fmt.Sprintf("HTTP listen at %v:%v", c.Address, c.Port))
 
 	for _, line := range output {
 		logger.Log(tag, line)

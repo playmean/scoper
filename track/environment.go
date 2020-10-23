@@ -1,6 +1,6 @@
 package track
 
-import "github.com/gofiber/fiber"
+import "github.com/gofiber/fiber/v2"
 
 // ResolveEnvironment for track
 func ResolveEnvironment(c *fiber.Ctx) string {

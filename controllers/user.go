@@ -6,11 +6,11 @@ import (
 	"github.com/playmean/scoper/generator"
 	"github.com/playmean/scoper/user"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // MiddlewareUser method
-func MiddlewareUser(c *fiber.Ctx) {
+func MiddlewareUser(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	u := user.User{
@@ -22,14 +22,14 @@ func MiddlewareUser(c *fiber.Ctx) {
 
 	c.Locals("user", &u)
 
-	c.Next()
+	return c.Next()
 }
 
 // UserInfo method
-func UserInfo(c *fiber.Ctx) {
+func UserInfo(c *fiber.Ctx) error {
 	u := c.Locals("user").(*user.User)
 
-	c.JSON(common.Response{
+	return c.JSON(common.Response{
 		OK: true,
 		Data: respUserInfo{
 			ID: u.ID,
@@ -44,36 +44,34 @@ func UserInfo(c *fiber.Ctx) {
 }
 
 // UserList method
-func UserList(c *fiber.Ctx) {
+func UserList(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	list := make([]user.User, 0)
 
 	db.Find(&list)
 
-	c.JSON(common.Response{
+	return c.JSON(common.Response{
 		OK:   true,
 		Data: list,
 	})
 }
 
 // UserCreate method
-func UserCreate(c *fiber.Ctx) {
+func UserCreate(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"username", "role"}) {
-		return
+		return c.Next()
 	}
 
 	username := c.FormValue("username")
 
 	if !common.ValidateName(username) {
-		c.Status(fiber.StatusBadRequest).JSON(common.Response{
+		return c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "username must be alphanumeric",
 		})
-
-		return
 	}
 
 	var u user.User
@@ -81,12 +79,10 @@ func UserCreate(c *fiber.Ctx) {
 	db.First(&u, "username = ?", username)
 
 	if u.ID > 0 {
-		c.Status(fiber.StatusConflict).JSON(common.Response{
+		return c.Status(fiber.StatusConflict).JSON(common.Response{
 			OK:    false,
 			Error: "username already taken",
 		})
-
-		return
 	}
 
 	password := generator.Password(12)
@@ -101,15 +97,15 @@ func UserCreate(c *fiber.Ctx) {
 
 	res := db.Save(&u)
 
-	common.Answer(c, res.Error, u)
+	return common.Answer(c, res.Error, u)
 }
 
 // UserManage method
-func UserManage(c *fiber.Ctx) {
+func UserManage(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"role"}) {
-		return
+		return c.Next()
 	}
 
 	userID := c.Params("id")
@@ -119,12 +115,10 @@ func UserManage(c *fiber.Ctx) {
 	db.First(&u, userID)
 
 	if u.ID == 0 {
-		c.Status(fiber.StatusNotFound).JSON(common.Response{
+		return c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})
-
-		return
 	}
 
 	fullname := c.FormValue("fullname")
@@ -135,11 +129,11 @@ func UserManage(c *fiber.Ctx) {
 
 	res := db.Save(&u)
 
-	common.Answer(c, res.Error, u)
+	return common.Answer(c, res.Error, u)
 }
 
 // UserReset method
-func UserReset(c *fiber.Ctx) {
+func UserReset(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	userID := c.Params("id")
@@ -149,12 +143,10 @@ func UserReset(c *fiber.Ctx) {
 	db.First(&u, userID)
 
 	if u.ID == 0 {
-		c.Status(fiber.StatusNotFound).JSON(common.Response{
+		return c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "user not found",
 		})
-
-		return
 	}
 
 	password := generator.Password(12)
@@ -164,5 +156,5 @@ func UserReset(c *fiber.Ctx) {
 
 	res := db.Save(&u)
 
-	common.Answer(c, res.Error, u)
+	return common.Answer(c, res.Error, u)
 }

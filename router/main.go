@@ -1,22 +1,25 @@
 package router
 
 import (
+	"time"
+
 	"github.com/playmean/scoper/common"
 	"github.com/playmean/scoper/config"
 	"github.com/playmean/scoper/controllers"
 	"github.com/playmean/scoper/user"
 
-	"github.com/gofiber/basicauth"
-	"github.com/gofiber/fiber"
-	"github.com/gofiber/fiber/middleware"
-	"github.com/gofiber/helmet"
-	"github.com/gofiber/limiter"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/helmet/v2"
 )
 
 // Setup app router
 func Setup(conf *config.Config, app *fiber.App) {
-	app.Use(middleware.Compress())
-	app.Use(middleware.Favicon())
+	app.Use(compress.New())
+	app.Use(favicon.New())
 	app.Use(helmet.New())
 
 	apiGroup := app.Group("/api", basicauth.New(basicauth.Config{
@@ -25,19 +28,17 @@ func Setup(conf *config.Config, app *fiber.App) {
 
 	apiGroup.Get("/info", controllers.UserInfo)
 
-	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) {
+	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) error {
 		user := c.Locals("user").(*user.User)
 
 		if user.Role != "super" {
-			c.Status(fiber.StatusForbidden).JSON(common.Response{
+			return c.Status(fiber.StatusForbidden).JSON(common.Response{
 				OK:    false,
 				Error: "insufficient rights",
 			})
-
-			return
 		}
 
-		c.Next()
+		return c.Next()
 	})
 	apiUsers.Get("/", controllers.UserList)
 	apiUsers.Post("/", controllers.UserCreate)
@@ -57,7 +58,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 	apiView.Get("/tracks/:id", controllers.ViewTrack)
 
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
-		Timeout: 10,
-		Max:     5,
+		Duration: 10 * time.Second,
+		Max:      10,
 	}), controllers.MiddlewareTrack)
 }

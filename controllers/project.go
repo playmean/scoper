@@ -6,12 +6,12 @@ import (
 	"github.com/playmean/scoper/project"
 	"github.com/playmean/scoper/user"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
 // ProjectList method
-func ProjectList(c *fiber.Ctx) {
+func ProjectList(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	list := make([]project.Project, 0)
@@ -20,26 +20,24 @@ func ProjectList(c *fiber.Ctx) {
 
 	res := db.Find(&list, "owner_id = ? OR public = ?", owner.ID, true)
 
-	common.Answer(c, res.Error, list)
+	return common.Answer(c, res.Error, list)
 }
 
 // ProjectCreate method
-func ProjectCreate(c *fiber.Ctx) {
+func ProjectCreate(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"name", "title"}) {
-		return
+		return c.Next()
 	}
 
 	name := c.FormValue("name")
 
 	if !common.ValidateName(name) {
-		c.Status(fiber.StatusBadRequest).JSON(common.Response{
+		return c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "project name must be alphanumeric",
 		})
-
-		return
 	}
 
 	owner := c.Locals("user").(*user.User)
@@ -56,15 +54,15 @@ func ProjectCreate(c *fiber.Ctx) {
 
 	res := db.Create(&prj)
 
-	common.Answer(c, res.Error, prj)
+	return common.Answer(c, res.Error, prj)
 }
 
 // ProjectManage method
-func ProjectManage(c *fiber.Ctx) {
+func ProjectManage(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	if !common.HaveFields(c, []string{"name", "title", "public"}) {
-		return
+		return c.Next()
 	}
 
 	projectKey := c.Params("key")
@@ -74,12 +72,10 @@ func ProjectManage(c *fiber.Ctx) {
 	db.First(&prj, "key = ?", projectKey)
 
 	if prj.ID == 0 {
-		c.Status(fiber.StatusNotFound).JSON(common.Response{
+		return c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
-
-		return
 	}
 
 	name := c.FormValue("name")
@@ -87,12 +83,10 @@ func ProjectManage(c *fiber.Ctx) {
 	public := c.FormValue("public")
 
 	if !common.ValidateName(name) {
-		c.Status(fiber.StatusBadRequest).JSON(common.Response{
+		return c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "project name must be alphanumeric",
 		})
-
-		return
 	}
 
 	prj.Name = name
@@ -101,5 +95,5 @@ func ProjectManage(c *fiber.Ctx) {
 
 	res := db.Save(&prj)
 
-	common.Answer(c, res.Error, prj)
+	return common.Answer(c, res.Error, prj)
 }

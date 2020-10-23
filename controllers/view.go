@@ -9,11 +9,11 @@ import (
 	"github.com/playmean/scoper/track"
 	"github.com/playmean/scoper/user"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // MiddlewareView method
-func MiddlewareView(c *fiber.Ctx) {
+func MiddlewareView(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	usr := c.Locals("user").(*user.User)
@@ -25,21 +25,19 @@ func MiddlewareView(c *fiber.Ctx) {
 	db.First(&prj, "key = ? AND (public = ? OR owner_id = ?)", projectKey, true, usr.ID)
 
 	if prj.ID == 0 {
-		c.Status(fiber.StatusNotFound).JSON(common.Response{
+		return c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
-
-		return
 	}
 
 	c.Locals("project", &prj)
 
-	c.Next()
+	return c.Next()
 }
 
 // ViewEnvironments method
-func ViewEnvironments(c *fiber.Ctx) {
+func ViewEnvironments(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	prj := c.Locals("project").(*project.Project)
@@ -55,11 +53,11 @@ func ViewEnvironments(c *fiber.Ctx) {
 	WHERE p.id = ?
 	GROUP BY t.environment`, prj.ID).Scan(&list)
 
-	common.Answer(c, res.Error, list)
+	return common.Answer(c, res.Error, list)
 }
 
 // ViewTags method
-func ViewTags(c *fiber.Ctx) {
+func ViewTags(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	prj := c.Locals("project").(*project.Project)
@@ -79,11 +77,11 @@ func ViewTags(c *fiber.Ctx) {
 	WHERE p.id = ?
 	GROUP BY tn.name`, prj.ID).Scan(&list)
 
-	common.Answer(c, res.Error, list)
+	return common.Answer(c, res.Error, list)
 }
 
 // ViewTagValues method
-func ViewTagValues(c *fiber.Ctx) {
+func ViewTagValues(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	prj := c.Locals("project").(*project.Project)
@@ -104,11 +102,11 @@ func ViewTagValues(c *fiber.Ctx) {
 	WHERE p.id = ? AND tn.id = ?
 	GROUP BY tv.value`, prj.ID, tagNameID).Scan(&list)
 
-	common.Answer(c, res.Error, list)
+	return common.Answer(c, res.Error, list)
 }
 
 // ViewTracks method
-func ViewTracks(c *fiber.Ctx) {
+func ViewTracks(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	prj := c.Locals("project").(*project.Project)
@@ -121,7 +119,7 @@ func ViewTracks(c *fiber.Ctx) {
 	if res.Error != nil {
 		common.Answer(c, res.Error, &origTracks)
 
-		return
+		return c.Next()
 	}
 
 	for _, trk := range origTracks {
@@ -139,11 +137,11 @@ func ViewTracks(c *fiber.Ctx) {
 		})
 	}
 
-	common.Answer(c, res.Error, &resTracks)
+	return common.Answer(c, res.Error, &resTracks)
 }
 
 // ViewTrack method
-func ViewTrack(c *fiber.Ctx) {
+func ViewTrack(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	prj := c.Locals("project").(*project.Project)
@@ -158,7 +156,7 @@ func ViewTrack(c *fiber.Ctx) {
 	if res.Error != nil {
 		common.Answer(c, res.Error, &origTrack)
 
-		return
+		return c.Next()
 	}
 
 	resTrack.Type = origTrack.Type
@@ -185,5 +183,5 @@ func ViewTrack(c *fiber.Ctx) {
 		INNER JOIN projects AS p ON (p.id = t.project_id)
 	WHERE p.id = ? AND t.id = ?`, prj.ID, trackID).Scan(&resTrack.Tags)
 
-	common.Answer(c, res.Error, &resTrack)
+	return common.Answer(c, res.Error, &resTrack)
 }

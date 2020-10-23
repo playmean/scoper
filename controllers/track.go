@@ -9,11 +9,11 @@ import (
 	"github.com/playmean/scoper/project"
 	"github.com/playmean/scoper/track"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // MiddlewareTrack for tracking APIs
-func MiddlewareTrack(c *fiber.Ctx) {
+func MiddlewareTrack(c *fiber.Ctx) error {
 	db := database.DBConn
 
 	var prj project.Project
@@ -24,30 +24,26 @@ func MiddlewareTrack(c *fiber.Ctx) {
 	db.First(&prj, "archived = 0 AND key = ?", projectKey)
 
 	if prj.ID == 0 {
-		c.Status(fiber.StatusNotFound).JSON(common.Response{
+		return c.Status(fiber.StatusNotFound).JSON(common.Response{
 			OK:    false,
 			Error: "project not found",
 		})
-
-		return
 	}
 
 	switch trackType {
 	case "error":
-		trackError(c, &prj)
+		return trackError(c, &prj)
 	case "log":
-		trackLog(c, &prj)
+		return trackLog(c, &prj)
 	default:
-		c.Status(fiber.StatusBadRequest).JSON(common.Response{
+		return c.Status(fiber.StatusBadRequest).JSON(common.Response{
 			OK:    false,
 			Error: "unknown type of track",
 		})
-
-		return
 	}
 }
 
-func trackError(c *fiber.Ctx, prj *project.Project) {
+func trackError(c *fiber.Ctx, prj *project.Project) error {
 	db := database.DBConn
 
 	var body track.ReportPacket
@@ -74,12 +70,12 @@ func trackError(c *fiber.Ctx, prj *project.Project) {
 
 	newTags(track, body.Tags)
 
-	common.Answer(c, res.Error, map[string]string{
+	return common.Answer(c, res.Error, map[string]string{
 		"hash": hashID(track.ID),
 	})
 }
 
-func trackLog(c *fiber.Ctx, prj *project.Project) {
+func trackLog(c *fiber.Ctx, prj *project.Project) error {
 	db := database.DBConn
 
 	var body track.LogPacket
@@ -102,7 +98,7 @@ func trackLog(c *fiber.Ctx, prj *project.Project) {
 
 	newTags(track, body.Tags)
 
-	common.Answer(c, res.Error, map[string]string{
+	return common.Answer(c, res.Error, map[string]string{
 		"hash": hashID(track.ID),
 	})
 }

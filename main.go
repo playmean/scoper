@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"strconv"
 
 	"github.com/playmean/scoper/config"
 	"github.com/playmean/scoper/connection"
@@ -13,7 +14,7 @@ import (
 	"github.com/playmean/scoper/track"
 	"github.com/playmean/scoper/user"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
@@ -43,7 +44,7 @@ func main() {
 
 	user.Populate(config.SuperUsers)
 
-	app := fiber.New(&fiber.Settings{
+	app := fiber.New(fiber.Config{
 		ServerHeader:          "scoper",
 		StrictRouting:         true,
 		DisableDefaultDate:    true,
@@ -52,7 +53,7 @@ func main() {
 
 	router.Setup(conf, app)
 
-	err = app.Listen(conf.Port)
+	err = app.Listen(conf.Address + ":" + strconv.Itoa(conf.Port))
 
 	if err != nil {
 		logger.Fatal("APP", "%v", err)
