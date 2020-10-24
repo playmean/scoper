@@ -94,5 +94,11 @@ func Setup(conf *config.Config, app *fiber.App) {
 	app.Post("/track/:key/:type", limiter.New(limiter.Config{
 		Duration: 10 * time.Second,
 		Max:      10,
+		LimitReached: func(c *fiber.Ctx) error {
+			return c.Status(fiber.StatusTooManyRequests).JSON(common.Response{
+				OK:    false,
+				Error: "too many requests",
+			})
+		},
 	}), controllers.MiddlewareTrack)
 }
