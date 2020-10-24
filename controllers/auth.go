@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"time"
-
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber/v2"
 	"github.com/playmean/scoper/common"
 	"github.com/playmean/scoper/user"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // Login method
@@ -23,13 +21,8 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	token := jwt.New(jwt.SigningMethodRS256)
+	token, err := makeToken(username)
 
-	claims := token.Claims.(jwt.MapClaims)
-	claims["username"] = username
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	t, err := token.SignedString(common.SigningKey)
 	if err != nil {
 		return common.Answer(c, err, nil)
 	}
@@ -37,7 +30,23 @@ func Login(c *fiber.Ctx) error {
 	return c.JSON(common.Response{
 		OK: true,
 		Data: respLogin{
-			Token: t,
+			Token: token,
+		},
+	})
+}
+
+// RevokeToken method
+func RevokeToken(c *fiber.Ctx) error {
+	token, err := makeToken(c.Locals("username").(string))
+
+	if err != nil {
+		return common.Answer(c, err, nil)
+	}
+
+	return c.JSON(common.Response{
+		OK: true,
+		Data: respLogin{
+			Token: token,
 		},
 	})
 }

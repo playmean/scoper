@@ -47,7 +47,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			return c.Status(fiber.StatusUnauthorized).JSON(common.Response{
 				OK:    false,
-				Error: "invalid token",
+				Error: "invalid or expired token",
 			})
 		},
 	}))
@@ -60,6 +60,7 @@ func Setup(conf *config.Config, app *fiber.App) {
 	apiGroup.Use(controllers.MiddlewareUser)
 
 	apiGroup.Get("/info", controllers.UserInfo)
+	apiGroup.Put("/revoke", controllers.RevokeToken)
 
 	apiUsers := apiGroup.Group("/users", func(c *fiber.Ctx) error {
 		user := c.Locals("user").(*user.User)

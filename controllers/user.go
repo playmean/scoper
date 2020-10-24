@@ -20,7 +20,7 @@ func MiddlewareUser(c *fiber.Ctx) error {
 		jwtToken := jwtInfo.(*jwt.Token)
 		claims := jwtToken.Claims.(jwt.MapClaims)
 
-		c.Locals("username", claims["username"].(string))
+		c.Locals("username", claims["user"].(string))
 	}
 
 	u := user.User{
@@ -29,6 +29,13 @@ func MiddlewareUser(c *fiber.Ctx) error {
 	}
 
 	db.Where("username = ?", u.Username).Take(&u)
+
+	if u.ID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(common.Response{
+			OK:    false,
+			Error: "user not found",
+		})
+	}
 
 	c.Locals("user", &u)
 
