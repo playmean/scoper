@@ -2,6 +2,9 @@
 
 FROM golang:1.14.4 AS builder
 
+ARG ARCH
+ENV GOARCH=$ARCH
+
 ADD . /src
 
 WORKDIR /src

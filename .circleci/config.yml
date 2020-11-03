@@ -24,10 +24,17 @@ jobs:
     executor: docker-publisher
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 19.03.12
       - run:
-          name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .
+          name: Build AMD64 Docker image
+          command: docker build --build-arg ARCH=amd64 --tag $IMAGE_NAME:latest .
+      - run:
+          name: Build ARM Docker image
+          command: docker build --build-arg ARCH=arm --tag $IMAGE_NAME:arm .
+      - run:
+          name: Build ARM64 Docker image
+          command: docker build --build-arg ARCH=arm64 --tag $IMAGE_NAME:arm64 .
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $IMAGE_NAME
@@ -40,15 +47,27 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 19.03.12
+      - run: |
+          ssh remote-docker \<<EOF
+            sudo bash -c 'echo "{\"experimental\": \"enabled\"}" > /etc/docker/daemon.json'
+            sudo systemctl restart docker
+          EOF
       - run:
           name: Load archived Docker image
           command: docker load -i /tmp/workspace/image.tar
       - run:
-          name: Publish Docker Image to Docker Hub
+          name: Publish image to Docker Hub
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:latest
+      - run:
+          name: Create docker manifest
+          command: docker manifest create $IMAGE_NAME:latest $IMAGE_NAME:arm $IMAGE_NAME:arm64
+      - run:
+          name: Publish manifest to Docker Hub
+          command: docker manifest push --purge $IMAGE_NAME:latest
 workflows:
   version: 2
   build-master:
