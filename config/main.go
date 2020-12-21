@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/kelseyhightower/envconfig"
+
 	"github.com/playmean/scoper/logger"
 )
 
@@ -14,22 +16,35 @@ type User struct {
 	Role     string `json:"role"`
 }
 
-// Config of manager
-type Config struct {
-	filePath string
-
-	Address  string `json:"address"`
-	Port     int    `json:"port"`
-	Database string `json:"database"`
-	Password string `json:"password"`
+// Database config
+type Database struct {
+	Host     string `json:"host" envconfig:"DATABASE_HOST"`
+	User     string `json:"user" envconfig:"DATABASE_USER"`
+	Password string `json:"password" envconfig:"DATABASE_PASS"`
+	DBName   string `json:"dbname" envconfig:"DATABASE_NAME"`
+	Port     int    `json:"port" envconfig:"DATABASE_PORT"`
 }
 
-// Default of manager
+// Config of server
+type Config struct {
+	Address  string   `json:"address" envconfig:"SERVER_ADDRESS"`
+	Port     int      `json:"port" envconfig:"SERVER_PORT"`
+	Password string   `json:"password"`
+	Database Database `json:"database"`
+}
+
+// Default config
 var Default = Config{
 	Address:  "",
 	Port:     8080,
-	Database: "database.db",
 	Password: "password",
+	Database: Database{
+		Host:     "localhost",
+		User:     "postgres",
+		Password: "",
+		DBName:   "scoper",
+		Port:     5432,
+	},
 }
 
 // SuperUsers predefined list
@@ -41,27 +56,36 @@ var tag = "CONFIG"
 func (c Config) Dump() {
 	var output []string
 
-	output = append(output, fmt.Sprintf("loaded configuration from \"%v\"", c.filePath))
-	output = append(output, fmt.Sprintf("HTTP listen at %v:%v", c.Address, c.Port))
+	output = append(output, fmt.Sprintf("HTTP listen at %s:%d", c.Address, c.Port))
+	output = append(output, fmt.Sprintf("database from %s:%d", c.Database.Host, c.Database.Port))
 
 	for _, line := range output {
 		logger.Log(tag, line)
 	}
 }
 
-// Load config from file
-func Load(configPath string) (*Config, error) {
+func readFileConfig(configPath string, c *Config) error {
 	buf, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
+	return json.Unmarshal(buf, &c)
+}
+
+// Load config from file
+func Load(configPath string) (*Config, error) {
+	var err error
 	var c Config = Default
 
-	c.filePath = configPath
+	err = readFileConfig(configPath, &c)
 
-	err = json.Unmarshal(buf, &c)
+	if err == nil {
+		logger.Log(tag, "loaded configuration from \"%v\"", configPath)
+	}
+
+	err = envconfig.Process("", &c)
 
 	SuperUsers["super"] = c.Password
 

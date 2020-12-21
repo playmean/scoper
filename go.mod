@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/helmet/v2 v2.0.1
 	github.com/gofiber/jwt/v2 v2.0.1
 	github.com/google/uuid v1.1.2
-	gorm.io/driver/sqlite v1.1.3
+	github.com/kelseyhightower/envconfig v1.4.0
+	gorm.io/driver/postgres v1.0.5
 	gorm.io/gorm v1.20.5
 )

@@ -1,10 +1,12 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/playmean/scoper/config"
 	"github.com/playmean/scoper/logger"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +21,16 @@ var (
 func Init(conf *config.Config) error {
 	var err error
 
-	DBConn, err = gorm.Open(sqlite.Open(conf.Database), &gorm.Config{})
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d",
+		conf.Database.Host,
+		conf.Database.User,
+		conf.Database.Password,
+		conf.Database.DBName,
+		conf.Database.Port,
+	)
+
+	DBConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		return err

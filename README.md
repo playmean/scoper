@@ -28,8 +28,15 @@ Default super user/password: `super:super_password`
 
 ```json
 {
+    "address": "localhost",
     "port": 8080,
     "password": "super_password",
-    "database": "/data/database.db"
+    "database": {
+        "host": "localhost",
+        "user": "postgres",
+        "password": "",
+        "dbname": "scoper",
+        "port": 5432
+    }
 }
 ```
